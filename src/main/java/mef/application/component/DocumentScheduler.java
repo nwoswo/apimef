@@ -496,7 +496,7 @@ public class DocumentScheduler {
 	}
 
 	//@Scheduled(cron = "0 0 8,16 * * *") // se ejecuta a las 8AM y 12PM
-	@Scheduled(fixedRate = 60000) // cada 24 horas 86400000
+	// @Scheduled(fixedRate = 60000) // cada 24 horas 86400000
 	public void ScheduletDocumentSGDD3() throws IOException {
 		System.out.println("EJECUTANDOSE ACTUALIZACION DE ESTADOS OBSERVADOS PROGRAMADOS DE DOCUMENTOS DEL SGDD: "
 				+ (new Date(System.currentTimeMillis())));
