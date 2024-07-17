@@ -28,6 +28,7 @@ import mef.application.modelo.DocumentoFinalizar;
 import mef.application.modelo.DocumentoGrilla;
 import mef.application.modelo.DocumentoObservacion;
 import mef.application.modelo.RespuestaMessage;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class DocumentoDaoImpl implements DocumentoDao {
@@ -783,19 +784,19 @@ public class DocumentoDaoImpl implements DocumentoDao {
 			// System.out.println("ENTRO");
 			 
 
-			StoredProcedureQuery query = entityManager
-					.createStoredProcedureQuery(databasePackage + ".P_UPDATE_ESTADO_DOC")
-					.registerStoredProcedureParameter(1, Long.class, ParameterMode.IN)
-					.registerStoredProcedureParameter(2, Long.class, ParameterMode.IN)
-					.registerStoredProcedureParameter(3, Integer.class, ParameterMode.OUT)
-					.registerStoredProcedureParameter(4, String.class, ParameterMode.OUT)
-					.setParameter(1, ID_DOCUMENTO).setParameter(2, ID_ESTADO);
+				StoredProcedureQuery query = entityManager
+						.createStoredProcedureQuery(databasePackage + ".P_UPDATE_ESTADO_DOC")
+						.registerStoredProcedureParameter(1, Long.class, ParameterMode.IN)
+						.registerStoredProcedureParameter(2, Long.class, ParameterMode.IN)
+						.registerStoredProcedureParameter(3, Integer.class, ParameterMode.OUT)
+						.registerStoredProcedureParameter(4, String.class, ParameterMode.OUT)
+						.setParameter(1, ID_DOCUMENTO).setParameter(2, ID_ESTADO);
 
-			query.execute();
+				query.execute();
 
-			// Integer estado = (Integer) query.getOutputParameterValue(4);
-			//String mensaje = (String) query.getOutputParameterValue(4);
-			query.unwrap(ProcedureOutputs.class).release();
+				// Integer estado = (Integer) query.getOutputParameterValue(4);
+				//String mensaje = (String) query.getOutputParameterValue(4);
+				query.unwrap(ProcedureOutputs.class).release();
 			//auditoria.objeto = mensaje;
 		} catch (Exception ex) {
 			auditoria.Error(ex);
@@ -1183,6 +1184,7 @@ public class DocumentoDaoImpl implements DocumentoDao {
 	}
 
 	@Override
+	@Transactional
 	public Auditoria Documento_Listar_PorEstado(Integer estadoId) {
 		Auditoria auditoria = new Auditoria();
 		auditoria.Limpiar();
@@ -1289,4 +1291,84 @@ public class DocumentoDaoImpl implements DocumentoDao {
 
 		return auditoria;
 	}
+
+
+
+	@Override
+	public Auditoria Documento_Listar_PorEstadoTemp(Integer estadoId) {
+		Auditoria auditoria = new Auditoria();
+		auditoria.Limpiar();
+		List<Documento> lista = new ArrayList<>();
+
+		try {
+			Documento documento = null;
+			StoredProcedureQuery query = entityManager
+					.createStoredProcedureQuery("SISVENVI.PQ_ESTADOS_SGDD" + ".P_LISTAR_PENDIENTES")
+					.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN)
+					.registerStoredProcedureParameter(2, Class.class, ParameterMode.REF_CURSOR)
+					.setParameter(1, estadoId);
+
+			List<Object[]> TableST = query.getResultList();
+			query.unwrap(ProcedureOutputs.class).release();
+
+			for (int i = 0; i < TableST.size(); i++) {
+				Object[] row = TableST.get(i);
+				documento = new Documento();
+				documento.setId_documento(Integer.valueOf(row[0] + ""));
+				documento.setDesc_estado_documento(Objects.toString(row[1], ""));
+				documento.setNumero_sid(Objects.toString(row[3], ""));
+				documento.setAnio(Integer.valueOf(row[4] + ""));
+				documento.setHoja_ruta(documento.getNumero_sid() + "-" + documento.getAnio());
+
+				lista.add(documento);
+			}
+			auditoria.objeto = lista;
+			entityManager.close();
+		} catch (NoResultException ex) {
+			auditoria.Error(ex);
+			System.out.println(auditoria.error_log);
+
+		} catch (Exception ex) {
+			auditoria.Error(ex);
+			System.out.println(auditoria.error_log);
+		}
+
+		return auditoria;
+	}
+
+
+
+	@Override
+	public Auditoria Actualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO, String des_error ) {
+		Auditoria auditoria = new Auditoria();
+		auditoria.Limpiar();
+		try {
+			// System.out.println(obs.getId_documento());
+			// System.out.println("ENTRO");
+
+
+			StoredProcedureQuery query = entityManager
+					.createStoredProcedureQuery("SISVENVI.PQ_ESTADOS_SGDD" + ".P_UPDATE_ESTADO_DOC")
+					.registerStoredProcedureParameter(1, Long.class, ParameterMode.IN)
+					.registerStoredProcedureParameter(2, Long.class, ParameterMode.IN)
+					.registerStoredProcedureParameter(3, String.class, ParameterMode.IN)
+					.registerStoredProcedureParameter(4, Integer.class, ParameterMode.OUT)
+					.registerStoredProcedureParameter(5, String.class, ParameterMode.OUT)
+					.setParameter(1, ID_DOCUMENTO)
+					.setParameter(2, ID_ESTADO)
+					.setParameter(3, des_error);
+
+			query.execute();
+
+			// Integer estado = (Integer) query.getOutputParameterValue(4);
+			//String mensaje = (String) query.getOutputParameterValue(4);
+			query.unwrap(ProcedureOutputs.class).release();
+			//auditoria.objeto = mensaje;
+		} catch (Exception ex) {
+			auditoria.Error(ex);
+			System.out.println(auditoria.error_log);
+		}
+		return auditoria;
+	}
+
 }

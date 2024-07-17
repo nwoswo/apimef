@@ -304,4 +304,14 @@ public class DocumentoServiceImpl implements DocumentoService {
 	public Auditoria Documento_Listar_PorEstado2(Integer estadoId) {
 		return documentoDao.Documento_Listar_PorEstado2(estadoId);
 	}
+
+	@Override
+	public Auditoria Documento_Listar_PorEstadoTemp(Integer estadoId) {
+		return documentoDao.Documento_Listar_PorEstadoTemp(estadoId);
+	}
+
+	@Override
+	public Auditoria Actualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO, String des_error ) {
+		return documentoDao.Actualizar_Estado(ID_DOCUMENTO, ID_ESTADO, des_error);
+	}
 }
