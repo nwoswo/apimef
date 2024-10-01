@@ -10,11 +10,11 @@ var ventanillaVirtual = angular.module('app', [ 'ngRoute', 'app.routes',
 		'ngBootbox', 'datatables', 'ngResource', ]);
 
 ventanillaVirtual
-// .constant('BASE_URL', env) // produccion
-// .constant('BASE_URL_CAPTCHA', env.replace('/api', '/captcha-servlet'))
+ .constant('BASE_URL', env) // produccion
+ .constant('BASE_URL_CAPTCHA', env.replace('/api', '/captcha-servlet'))
 
-.constant('BASE_URL', 'http://localhost:8888/api') // local
-.constant('BASE_URL_CAPTCHA', 'http://localhost:8888/captcha-servlet')
+//.constant('BASE_URL', 'http://localhost:8888/api') // local
+//.constant('BASE_URL_CAPTCHA', 'http://localhost:8888/captcha-servlet')
 
  //.constant('BASE_URL', 'http://localhost:8888/api') // local
 // .constant('BASE_URL_CAPTCHA', 'http://localhost:8888/captcha-servlet') //

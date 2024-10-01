@@ -144,7 +144,10 @@ dependencies {
 
 
 }
-
+bootWar {
+	baseName = 'ventanilla'
+	archiveName 'ventanilla.war'
+}
 // tag::bootjar[]
 bootJar {
 	baseName = 'api-mef-service'
@@ -157,3 +160,4 @@ enabled=true
 		attributes 'Dependencies': 'jdk.unsupported'
 	}
 }
+

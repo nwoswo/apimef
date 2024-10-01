@@ -569,7 +569,7 @@ public class DocumentScheduler {
 	}
 
 
-	@Scheduled(cron = "0 0 0 * * *") // se ejecuta a la media noche
+//	@Scheduled(cron = "0 0 * * * *") // cada hora   // desactivado del excel
 	// @Scheduled(fixedRate = 60000) // cada 24 horas 86400000
 	public void ScheduletDocumentSGDD4() throws IOException {
 
@@ -644,6 +644,167 @@ public class DocumentScheduler {
 					System.out.println(ex.getMessage());
 					docService.Actualizar_Estado(documento.getId_documento(), 100, ex.toString());
 					logger.error("ERROR EN EL SERVICIO DE ESTADO SGDD: " + documento.getId_documento() );
+//					System.out.println(ex.toString());
+				}
+			}
+		}
+	}
+
+
+	@Scheduled(cron = "0 0 0,6 * * *") // 12am 6 am
+	public void ScheduletDocumentSGDD5() throws IOException {
+
+		System.out.println("-----ScheduletDocumentSGDD5-------");
+
+		System.out.println("ACTUALIZACION DE ESTADOS PARA EL TAB PENDIENTES "
+				+ (new Date(System.currentTimeMillis())));
+
+		Auditoria documentosPorRecibir = docService.Documento_Listar_Pendiente_Bandeja("TAB_OBSERVADO");
+		// System.out.println("entro aqui 1");
+		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
+			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
+			// System.out.println("entro aqui 1");
+			System.out.println("Lista de :" + lista.size());
+			for (Documento documento : lista) {
+				try {
+					System.out.println("Solicitud a reparar:" + documento.getId_documento());
+					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
+					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
+
+					IdValorDto idValorDto = new IdValorDto();
+					System.out.println("Datos del documento: id:" + documento.getId_documento());
+					System.out.println("sid:" + documento.getNumero_sid());
+					System.out.println("anio:" + documento.getAnio());
+
+					VentanillastdProxy proxy = new VentanillastdProxy();
+					String USU = "lmauricio";
+					String IP = "10.10.10.10";
+					// System.out.println("RUC: " + ruc);
+					// System.out.println("IP: " + IP);
+
+					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
+
+					ObjectMapper mapper = new ObjectMapper();
+					System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(idValorDto));
+
+					if (idValorDto != null) {
+
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { //POR RECIBIR
+
+							docService.Actualizar_Estado(documento.getId_documento(), 7, "");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(2L)) { //RECIBIDO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("EN PROCESO") && idValorDto.getId().equals(3L)) { //RECIBIDO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("OBSERVADO") && idValorDto.getId().equals(1L)) { //OBSERVADO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 2,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO") && (idValorDto.getId().equals(6L) ||  idValorDto.getId().equals(7L)) ) { //ANULADO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 6,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("FINALIZADO") && idValorDto.getId().equals(4L)) { //FINALIZADO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 5,"");
+						}
+
+
+					}
+
+					// System.out.println("RUC: " + ruc);
+
+				} catch (Exception ex) {
+//					docService.Documento_FlgServicioError(documento.getId_documento());
+					System.out.println(ex.getMessage());
+					docService.Actualizar_Estado(documento.getId_documento(), 100, ex.toString());
+					logger.error("ERROR EN EL SERVICIO DE ESTADO SGDD: " + documento.getId_documento() );
+//					System.out.println(ex.toString());
+				}
+			}
+		}
+	}
+
+
+
+	@Scheduled(cron = "0 0 1,5 * * *") // 1 am 5 am
+	public void ScheduletDocumentSGDD6() throws IOException {
+
+		System.out.println("-----ScheduletDocumentSGDD6-------");
+
+		System.out.println("ACTUALIZACION DE ESTADOS PARA EL TAB OBSERVADOS: "
+				+ (new Date(System.currentTimeMillis())));
+
+		Auditoria documentosPorRecibir = docService.Documento_Listar_Pendiente_Bandeja("TAB_PENDIENTE");
+		// System.out.println("entro aqui 1");
+		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
+			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
+			// System.out.println("entro aqui 1");
+			System.out.println("Lista de :" + lista.size());
+			for (Documento documento : lista) {
+				try {
+					System.out.println("Solicitud a reparar:" + documento.getId_documento());
+					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
+					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
+
+					IdValorDto idValorDto = new IdValorDto();
+					System.out.println("Datos del documento: id:" + documento.getId_documento());
+					System.out.println("sid:" + documento.getNumero_sid());
+					System.out.println("anio:" + documento.getAnio());
+
+					VentanillastdProxy proxy = new VentanillastdProxy();
+					String USU = "lmauricio";
+					String IP = "10.10.10.10";
+					// System.out.println("RUC: " + ruc);
+					// System.out.println("IP: " + IP);
+
+					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
+
+					ObjectMapper mapper = new ObjectMapper();
+					System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(idValorDto));
+
+					if (idValorDto != null) {
+
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { //POR RECIBIR
+
+							docService.Actualizar_Estado(documento.getId_documento(), 7, "");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(2L)) { //RECIBIDO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("EN PROCESO") && idValorDto.getId().equals(3L)) { //RECIBIDO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("OBSERVADO") && idValorDto.getId().equals(1L)) { //OBSERVADO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 2,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO") && (idValorDto.getId().equals(6L) ||  idValorDto.getId().equals(7L)) ) { //ANULADO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 6,"");
+						}
+						if (idValorDto.getValor().toUpperCase().equals("FINALIZADO") && idValorDto.getId().equals(4L)) { //FINALIZADO
+
+							docService.Actualizar_Estado(documento.getId_documento(), 5,"");
+						}
+
+
+					}
+
+					// System.out.println("RUC: " + ruc);
+
+				} catch (Exception ex) {
+//					docService.Documento_FlgServicioError(documento.getId_documento());
+					System.out.println(ex.getMessage());
+					docService.Actualizar_Estado(documento.getId_documento(), 100, ex.toString());
+					logger.error("ACTUALIZACION DE ESTADOS PARA EL TAB OBSERVADOS: " + documento.getId_documento() );
 //					System.out.println(ex.toString());
 				}
 			}

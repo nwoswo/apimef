@@ -1371,4 +1371,51 @@ public class DocumentoDaoImpl implements DocumentoDao {
 		return auditoria;
 	}
 
+
+
+	@Override
+	public Auditoria Documento_Listar_Pendiente_Bandeja(String tab) {
+		Auditoria auditoria = new Auditoria();
+		auditoria.Limpiar();
+		List<Documento> lista = new ArrayList<>();
+
+		try {
+			Documento documento = null;
+			StoredProcedureQuery query = entityManager
+					.createStoredProcedureQuery("SISVENVI.PQ_ESTADOS_SGDD" + ".P_LISTAR_PENDIENTES_TAB")
+					.registerStoredProcedureParameter(1, String.class, ParameterMode.IN)
+					.registerStoredProcedureParameter(2, Class.class, ParameterMode.REF_CURSOR)
+					.setParameter(1, tab);
+
+			List<Object[]> TableST = query.getResultList();
+			query.unwrap(ProcedureOutputs.class).release();
+
+			for (int i = 0; i < TableST.size(); i++) {
+				Object[] row = TableST.get(i);
+				if( row[0] !=null & row[1] !=null & row[2] !=null & row[3] !=null ){
+					documento = new Documento();
+
+					documento.setId_documento(Integer.valueOf( row[0] != null ? row[0]+"" : ""));
+					documento.setNumero_sid(Objects.toString(row[2] != null ? row[2] : "", ""));
+					documento.setAnio(Integer.valueOf( row[3] != null ? row[3]+"" : ""));
+					documento.setHoja_ruta(Objects.toString(row[1] != null ? row[2] : "", ""));
+
+					lista.add(documento);
+				}
+
+			}
+			auditoria.objeto = lista;
+			entityManager.close();
+		} catch (NoResultException ex) {
+			auditoria.Error(ex);
+			System.out.println(auditoria.error_log);
+
+		} catch (Exception ex) {
+			auditoria.Error(ex);
+			System.out.println(auditoria.error_log);
+		}
+
+		return auditoria;
+	}
+
 }

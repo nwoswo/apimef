@@ -314,4 +314,10 @@ public class DocumentoServiceImpl implements DocumentoService {
 	public Auditoria Actualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO, String des_error ) {
 		return documentoDao.Actualizar_Estado(ID_DOCUMENTO, ID_ESTADO, des_error);
 	}
+
+
+	@Override
+	public Auditoria Documento_Listar_Pendiente_Bandeja(String tab) {
+		return documentoDao.Documento_Listar_Pendiente_Bandeja(tab);
+	}
 }

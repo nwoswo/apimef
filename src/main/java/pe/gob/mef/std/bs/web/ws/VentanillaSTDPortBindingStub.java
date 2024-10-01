@@ -7,6 +7,11 @@
 
 package pe.gob.mef.std.bs.web.ws;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.rmi.RemoteException;
+
 public class VentanillaSTDPortBindingStub extends org.apache.axis.client.Stub implements pe.gob.mef.std.bs.web.ws.Ventanillastd_PortType {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
     private java.util.Vector cachedSerQNames = new java.util.Vector();
@@ -14,6 +19,8 @@ public class VentanillaSTDPortBindingStub extends org.apache.axis.client.Stub im
     private java.util.Vector cachedDeserFactories = new java.util.Vector();
 
     static org.apache.axis.description.OperationDesc [] _operations;
+
+    private static final Logger logger = LoggerFactory.getLogger(VentanillaSTDPortBindingStub.class);
 
     static {
         _operations = new org.apache.axis.description.OperationDesc[21];
@@ -1233,22 +1240,27 @@ public class VentanillaSTDPortBindingStub extends org.apache.axis.client.Stub im
  try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {NOMBRECORTO, NUM_REGISTRO, new java.lang.Long(TIPO_DOCUMENTO), NUM_OFICIO, new java.lang.Integer(NUM_FOLIOS), ASUNTO, APELLIDOPATERNO, APELLIDOMATERNO, NOMBRES, DNI, TELEFONO, RAZONSOCIAL, RUC, DIRECCION, DEPARTAMENTO, PROVINCIA, DISTRITO, CORREO, ANEXOS, REMOTEADDRESS, UNIDADES, IDCONGRESISTA, IDCOMISION, CLASIFICACIONES, new java.lang.Integer(PRIORIDAD), ANEXOSHR});
 
         if (_resp instanceof java.rmi.RemoteException) {
+            logger.error(((RemoteException) _resp).getMessage());
             throw (java.rmi.RemoteException)_resp;
+
         }
         else {
             extractAttachments(_call);
             try {
                 return (pe.gob.mef.std.bs.web.ws.HrDto) _resp;
             } catch (java.lang.Exception _exception) {
+                logger.error(_exception.getMessage());
                 return (pe.gob.mef.std.bs.web.ws.HrDto) org.apache.axis.utils.JavaUtils.convert(_resp, pe.gob.mef.std.bs.web.ws.HrDto.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
     if (axisFaultException.detail != null) {
         if (axisFaultException.detail instanceof java.rmi.RemoteException) {
+            logger.error(axisFaultException.detail.getMessage());
               throw (java.rmi.RemoteException) axisFaultException.detail;
          }
         if (axisFaultException.detail instanceof pe.gob.mef.std.bs.web.ws.ErrorInfo) {
+            logger.error(axisFaultException.detail.getMessage());
               throw (pe.gob.mef.std.bs.web.ws.ErrorInfo) axisFaultException.detail;
          }
    }
