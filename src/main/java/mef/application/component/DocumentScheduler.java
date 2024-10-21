@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
@@ -651,18 +652,21 @@ public class DocumentScheduler {
 	}
 
 
-	@Scheduled(cron = "0 0 0,6 * * *") // 12am 6 am
+	@Scheduled(cron = "10 8,12,13,19,22 * * *") // mas 10 min
 	public void ScheduletDocumentSGDD5() throws IOException {
 
 		System.out.println("-----ScheduletDocumentSGDD5-------");
 
-		System.out.println("ACTUALIZACION DE ESTADOS PARA EL TAB PENDIENTES "
+		System.out.println("ACTUALIZACION DE ESTADOS PARA EL TAB_OBSERVADO "
 				+ (new Date(System.currentTimeMillis())));
 
 		Auditoria documentosPorRecibir = docService.Documento_Listar_Pendiente_Bandeja("TAB_OBSERVADO");
 		// System.out.println("entro aqui 1");
 		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
 			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
+
+//			lista = lista.stream().filter(  n-> n.getId_documento() == 347421).collect(Collectors.toList());
+
 			// System.out.println("entro aqui 1");
 			System.out.println("Lista de :" + lista.size());
 			for (Documento documento : lista) {
@@ -737,7 +741,7 @@ public class DocumentScheduler {
 
 		System.out.println("-----ScheduletDocumentSGDD6-------");
 
-		System.out.println("ACTUALIZACION DE ESTADOS PARA EL TAB OBSERVADOS: "
+		System.out.println("ACTUALIZACION DE ESTADOS PARA EL TAB TAB_PENDIENTE: "
 				+ (new Date(System.currentTimeMillis())));
 
 		Auditoria documentosPorRecibir = docService.Documento_Listar_Pendiente_Bandeja("TAB_PENDIENTE");
