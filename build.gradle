@@ -18,7 +18,7 @@ apply plugin: 'war'
 apply plugin: 'application'
 
 group = 'mef'
-version = ''
+version = '1.0.5'
 sourceCompatibility = 1.8
 mainClassName='mef.application.AcervoOracleApplication'
 
@@ -147,6 +147,10 @@ dependencies {
 bootWar {
 	baseName = 'ventanilla'
 	archiveName 'ventanilla.war'
+	manifest {
+		attributes 'Implementation-Title': project.name,
+				'Implementation-Version': version
+	}
 }
 // tag::bootjar[]
 bootJar {
@@ -161,3 +165,11 @@ enabled=true
 	}
 }
 
+processResources {
+	filesMatching("**/application.properties") {
+		expand(project.properties)
+	}
+}
+bootRun {
+	systemProperty 'app.version', version
+}

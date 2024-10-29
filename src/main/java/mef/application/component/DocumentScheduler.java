@@ -652,7 +652,7 @@ public class DocumentScheduler {
 	}
 
 
-	@Scheduled(cron = "10 8,12,13,19,22 * * *") // mas 10 min
+	@Scheduled(cron = "0 10 8,12,13,19,22 * * *")
 	public void ScheduletDocumentSGDD5() throws IOException {
 
 		System.out.println("-----ScheduletDocumentSGDD5-------");

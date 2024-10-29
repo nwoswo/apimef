@@ -53,6 +53,7 @@ public class AcervoOracleApplication extends SpringBootServletInitializer
     }*/
 	
 	public static void main(String[] args) {
+		System.out.print("V1.0.5");
 		SpringApplication.run(AcervoOracleApplication.class, args);
 		//onStartup();
 	}
@@ -74,5 +75,5 @@ public class AcervoOracleApplication extends SpringBootServletInitializer
 		//storageService.deleteAll();
 	    //storageService.init();
 	}*/
-	
+
 }
