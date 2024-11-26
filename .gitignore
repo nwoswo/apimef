@@ -265,3 +265,23 @@ gradle-app.setting
 # Ignorar la carpeta bin y sus subcarpetas
 bin/
 .idea/modules/
+.gradle/*
+
+#
+# Archivos de Gradle
+.gradle/
+
+# Archivos de IntelliJ IDEA
+.idea/
+*.iml
+
+# Configuración de Eclipse
+.settings/
+*.prefs
+
+# Configuración de Visual Studio Code
+.vscode/
+
+# Archivos de caché y temporales
+*.lock
+misc.xml

@@ -494,13 +494,33 @@ public class DocumentoControlador {
 						String USU = "lmauricio";
 						System.out.println("Creando Expediente:");
 						// Crear expediente en el SGDD
-						expediente = proxy.crearExpediente(USU, auditoria.objeto.toString() + "",
-								Long.valueOf(doc.getId_tipo_documento()), doc.getNro_documento(), doc.getNro_folios(),
-								doc.getAsunto().replaceAll("\u0002", ""), apellido_paterno, apellido_materno, nombre,
-								dni, mipersona.getTelefono(), razon_social, ruc, mipersona.getDireccion(),
-								mipersona.getDesc_departamento(), mipersona.getDesc_provincia(),
-								mipersona.getDesc_distrito(), mipersona.getCorreo(), anexoDto, IP, oficinas, null, null,
-								new long[0], 0, anexosHR);
+						expediente = proxy.crearExpediente(
+								USU,
+								auditoria.objeto.toString() + "",
+								Long.valueOf(doc.getId_tipo_documento()),
+								doc.getNro_documento(),
+								doc.getNro_folios(),
+								doc.getAsunto().replaceAll("\u0002", ""),
+								apellido_paterno,
+								apellido_materno,
+								nombre,
+								dni,
+								mipersona.getTelefono(),
+								razon_social,
+								ruc,
+								mipersona.getDireccion(),
+								mipersona.getDesc_departamento(),
+								mipersona.getDesc_provincia(),
+								mipersona.getDesc_distrito(),
+								mipersona.getCorreo(),
+								anexoDto,
+								IP,
+								oficinas,
+								null,
+								null,
+								new long[0],
+								0,
+								anexosHR);
 						if (expediente != null) {
 
 							System.out.println("Datos de retorno: ");
@@ -795,7 +815,7 @@ public class DocumentoControlador {
 					 * AnexoDto(fileByte, fileByte.length, filenameAnexo));
 					 * System.out.println("Files Anexo: " + fileByte.length); } }
 					 */
-//text.contains(word);
+					// text.contains(word);
 					if (doc.getFilesAnexos() != null)
 						for (MultipartFile file : doc.getFilesAnexos()) {
 							filenameAnexo = UUID.randomUUID().toString();
