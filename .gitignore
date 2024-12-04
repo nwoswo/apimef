@@ -265,3 +265,7 @@ gradle-app.setting
 # Ignorar la carpeta bin y sus subcarpetas
 bin/
 .idea/modules/
+
+
+# Ignorar configuraciones de VS Code
+.vscode/
