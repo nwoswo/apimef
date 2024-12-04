@@ -285,3 +285,5 @@ bin/
 # Archivos de caché y temporales
 *.lock
 misc.xml
+
+
