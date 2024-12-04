@@ -10,7 +10,10 @@ import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.procedure.ProcedureOutputs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +28,11 @@ import mef.application.modelo.UsuarioPersona;
 import mef.application.modelo.UsuarioPersonaGrilla;
 
 @Repository
+
 public class PersonaDaoImpl implements PersonaDao {
+
+	private static final Logger logger = LoggerFactory.getLogger(PersonaDaoImpl.class);
+
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -1028,10 +1035,8 @@ public class PersonaDaoImpl implements PersonaDao {
 		auditoria.Limpiar();
 		try {
 			Integer PI_ID_PERSONA = modelo.getIdpersona();
-			
 			Integer PI_REP_LEGAL_ID_TIPO_DOCUMENTO = modelo.getRep_legal_id_tipo_documento();
 			Integer PI_DELEGADO_ID_TIPO_DOCUMENTO = modelo.getDelegado_id_tipo_documento();
-			
 			String PI_CELULAR = modelo.getCelular();
 			String PI_TELEFONO = modelo.getTelefono();
 			String PI_CORREO = modelo.getCorreo();
@@ -1041,13 +1046,11 @@ public class PersonaDaoImpl implements PersonaDao {
 			String PI_ID_PROVINCIA = modelo.getIdprovincia();
 			String PI_ID_DISTRITO = modelo.getIddistrito();
 			String PI_ID_COD_ARCHIVO = modelo.getCodigoarchivo();
-			System.out.println(PI_ID_PERSONA);
-			System.out.println(PI_CELULAR);
-			System.out.println(PI_TELEFONO);
-			System.out.println(PI_CORREO);
-			System.out.println(PI_DIRECCION);
-			System.out.println(" REP ID" + PI_REP_LEGAL_ID_TIPO_DOCUMENTO);
-			System.out.println(PI_ID_COD_ARCHIVO);
+
+			logger.info("PI_ID_PERSONA:  {}", PI_ID_PERSONA);
+			logger.info("PI_CORREO:  {}", PI_CORREO);
+			logger.info("PI_REP_LEGAL_ID_TIPO_DOCUMENTO:  {}", PI_REP_LEGAL_ID_TIPO_DOCUMENTO);
+
 			StoredProcedureQuery query = entityManager
 					.createStoredProcedureQuery(pck_seg_persona + ".USP_PERSONA_ACTUALIZAR")
 					.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN)
@@ -1068,17 +1071,25 @@ public class PersonaDaoImpl implements PersonaDao {
 			query.unwrap(ProcedureOutputs.class).release();
 			int PI_ID_USUARIO_EXTERNO = 0;
 			String PI_MENSAJE = "";
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			String json = objectMapper.writeValueAsString(TableST);
+
+			logger.info("TableST:  {}", json);
 			for (int i = 0; i < TableST.size(); i++) {
 				Object[] row = TableST.get(i);
 				PI_ID_USUARIO_EXTERNO = Integer.valueOf(row[0] + "");
 				PI_MENSAJE = String.valueOf(row[1]);
 			}
 
-			if (PI_ID_USUARIO_EXTERNO == 0) {
+
+			logger.info("PI_ID_USUARIO_EXTERNO:  {}", PI_ID_USUARIO_EXTERNO);
+			if (PI_ID_USUARIO_EXTERNO != 0) {
 				auditoria.Rechazar(PI_MENSAJE);
 				// auditoria.ejecucion_procedimiento = false;
 				// auditoria.mensaje_salida = PI_MENSAJE;
 			} else {
+
 				StoredProcedureQuery queryR = entityManager
 						.createStoredProcedureQuery(pck_seg_persona + ".USP_PERSONA_R_ACTUALIZAR")
 						.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN)
@@ -1131,6 +1142,7 @@ public class PersonaDaoImpl implements PersonaDao {
 		} catch (Exception ex) {
 			auditoria.Error(ex);
 			System.out.println(auditoria.error_log);
+			logger.error("auditoria.error_log:  {}", ex);
 		}
 		return auditoria;
 	}
