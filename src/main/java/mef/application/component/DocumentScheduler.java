@@ -155,7 +155,7 @@ public class DocumentScheduler {
 			System.out.println("Lista de :" + lista.size());
 			for (Documento documento : lista) {
 				try {
-					System.out.println("Solicitud a reparar:" + documento.getId_documento());
+					System.out.println("Solicitud a reparar estado 8:" + documento.getId_documento());
 					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
 					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
 					HrDto expediente = new HrDto();

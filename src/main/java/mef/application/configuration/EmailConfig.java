@@ -35,7 +35,7 @@ public class EmailConfig {
     public EmailComponent getEmailComponent(){
     	SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(getTemplateResolver());
-
+        //TODO configuracion email
         return new EmailComponent(templateEngine, javaMailSender);
     }
 

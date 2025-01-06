@@ -318,7 +318,7 @@ ventanillaVirtual
 									$scope.MostrarErrores(res);						
 								}				
 						});		
-					},60000); // 1 min 
+					},300000); // 1 min 
 					
 					/*
 					 * INIT()
