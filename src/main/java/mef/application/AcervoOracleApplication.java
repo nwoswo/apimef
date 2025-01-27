@@ -51,7 +51,8 @@ public class AcervoOracleApplication extends SpringBootServletInitializer
            
         };
     }*/
-	
+
+	//Metodo principal
 	public static void main(String[] args) {
 		System.out.print("V1.0.5");
 		SpringApplication.run(AcervoOracleApplication.class, args);
