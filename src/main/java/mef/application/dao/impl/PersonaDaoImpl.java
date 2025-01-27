@@ -1001,9 +1001,15 @@ public class PersonaDaoImpl implements PersonaDao {
 					.registerStoredProcedureParameter(8, String.class, ParameterMode.IN)
 					.registerStoredProcedureParameter(9, String.class, ParameterMode.IN)
 					.registerStoredProcedureParameter(10, Class.class, ParameterMode.REF_CURSOR)
-					.setParameter(1, PI_ID_PERSONA).setParameter(2, PI_CELULAR).setParameter(3, PI_TELEFONO)
-					.setParameter(4, PI_CORREO).setParameter(5, PI_DIRECCION).setParameter(6, PI_ID_DEPARTAMENTO)
-					.setParameter(7, PI_ID_PROVINCIA).setParameter(8, PI_ID_DISTRITO).setParameter(9, PI_ID_COD_ARCHIVO);
+					.setParameter(1, PI_ID_PERSONA)
+					.setParameter(2, PI_CELULAR)
+					.setParameter(3, PI_TELEFONO)
+					.setParameter(4, PI_CORREO)
+					.setParameter(5, PI_DIRECCION)
+					.setParameter(6, PI_ID_DEPARTAMENTO)
+					.setParameter(7, PI_ID_PROVINCIA)
+					.setParameter(8, PI_ID_DISTRITO)
+					.setParameter(9, PI_ID_COD_ARCHIVO);
 
 			// query.execute();
 			List<Object[]> TableST = query.getResultList();
