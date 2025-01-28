@@ -285,7 +285,7 @@ bin/
 # Archivos de caché y temporales
 *.lock
 misc.xml
-
+#
 
 
 # Ignorar configuraciones específicas de Eclipse
