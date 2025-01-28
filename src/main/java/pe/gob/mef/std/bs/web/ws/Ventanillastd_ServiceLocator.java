@@ -24,7 +24,7 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
     // Use to get a proxy class for VentanillaSTDPort
     // private java.lang.String VentanillaSTDPort_address = "http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl";
 //    private java.lang.String VentanillaSTDPort_address = "http://10.5.115.48:8080/tramite/webservice/ventanillastd?wsdl";  //error
-   private java.lang.String VentanillaSTDPort_address = "http://10.5.112.43:8080/tramite/webservice/ventanillastd2?wsdl";
+   private java.lang.String VentanillaSTDPort_address = "http://10.5.112.43:8080/tramite/webservice/ventanillastd?wsdl";
     //http://sisadm.mef.gob.pe:8280/tramite/webservice/ventanillastd?wsdl
     //http://10.5.115.48:8080/tramite/webservice/ventanillastd?wsdl
 
@@ -108,7 +108,7 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
         }
     }
 
-    public javax.xml.namespace.QName getServiceName() {
+    public javax.xml.namespace.QName getServiceName() {374201
         return new javax.xml.namespace.QName("http://ws.web.bs.std.mef.gob.pe/", "ventanillastd");
     }
 
