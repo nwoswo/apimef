@@ -74,7 +74,6 @@ public interface DocumentoDao {
 	
 	public Auditoria Documento_Listar_PorEstado(Integer estadoId);
 	public Auditoria Documento_Listar_PorEstado2(Integer estadoId);
-	public Auditoria Documento_Listar_PorEstadoTemp(Integer estadoId);
 	public Auditoria Actualizar_Estado(long ID_DOCUMENTO , long ID_ESTADO, String des_error );
 
 	public Auditoria Documento_Listar_Pendiente_Bandeja(String tab);

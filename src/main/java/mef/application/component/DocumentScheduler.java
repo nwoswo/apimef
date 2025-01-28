@@ -83,7 +83,8 @@ public class DocumentScheduler {
 		this.emailComponent = emailComponent;
 	}
 
-	// @Scheduled(fixedRate = 50000)
+
+	// Job de prueba para recar un nuevo registro en SGDD
 	public void TestSGDD() throws IOException {
 		System.out.println("-----TestSGDD-------");
 		System.out.println(
@@ -141,21 +142,20 @@ public class DocumentScheduler {
 		}
 	}
 
+	//Job que realiza un query by estado 8 and flag 1 de error de servicio SGDD para obtener HR nuevamente
 	@Scheduled(fixedRate = 300000)
 	public void ScheduletDocumentSGDD() throws IOException {
-		System.out.println("-----ScheduletDocumentSGDD-------");
-		System.out.println(
-				"EJECUTANDOSE ENVIOS PROGRAMADOS DE DOCUMENTOS AL SGDD: " + (new Date(System.currentTimeMillis())));
+		logger.info("-----ScheduletDocumentSGDD------- estado 8 flag 1");
+		logger.info(
+				"EJECUTANDOSE ENVIOS PROGRAMADOS DE DOCUMENTOS AL SGDD : " + (new Date(System.currentTimeMillis())));
 
 		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado(8);
-		// System.out.println("entro aqui 1");
 		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
 			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
-			System.out.println("entro aqui 1");
-			System.out.println("Lista de :" + lista.size());
+			logger.info("Lista de :" + lista.size());
 			for (Documento documento : lista) {
 				try {
-					System.out.println("Solicitud a reparar estado 8:" + documento.getId_documento());
+					logger.info("Solicitud a reparar estado 8:" + documento.getId_documento());
 					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
 					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
 					HrDto expediente = new HrDto();
@@ -174,8 +174,8 @@ public class DocumentScheduler {
 					byte[] fileByte = Files.readAllBytes(path);
 					anexoDtoPrincipal.add(new AnexoDto(fileByte, fileByte.length, filename.replaceAll("\u0002", "")));
 
-					System.out.println("File principal: " + "" + fileByte.length);
-					System.out.println("File principal: " + filename);
+					logger.info("File principal: " + "" + fileByte.length);
+					logger.info("File principal: " + filename);
 
 					List<DocumentoAnexo> anexos = docService.getAnexosDocumentoById(documento.getId_documento());
 					for (DocumentoAnexo itemAnexo : anexos) {
@@ -207,7 +207,6 @@ public class DocumentScheduler {
 					if (auditoriaPersona.ejecucion_procedimiento)
 						mipersona = (UsuarioPersona) auditoriaPersona.objeto;
 
-					System.out.println("Datos de la persona");
 					VentanillastdProxy proxy = new VentanillastdProxy();
 					String nombre_persona = "";
 					String nombre = mipersona.getNombre_usuario();
@@ -236,11 +235,9 @@ public class DocumentScheduler {
 							mipersona.setDireccion(direcc);
 						}
 					}
-					// System.out.println("RUC: " + ruc);
-					// System.out.println("IP: " + IP);
-					System.out.println("VERSIONDEENVIO 13102023");
-					System.out.println("Solicitud: " + documento.getId_documento());
-					System.out.println("Asunto:" + documento.getAsunto());
+					
+					logger.info("Solicitud: " + documento.getId_documento());
+					logger.info("Asunto:" + documento.getAsunto());
 					expediente = proxy.crearExpediente(USU, documento.getId_documento() + "",
 							Long.valueOf(documento.getId_tipo_documento()), documento.getNro_documento(),
 							documento.getNro_folios(), documento.getAsunto().replaceAll("\u0002", ""), apellido_paterno,
@@ -251,14 +248,15 @@ public class DocumentScheduler {
 							new long[0], 0, anexosHR);
 					if (expediente != null) {
 
-						System.out.println("Datos de retorno: ");
-						System.out.println("getNumeroDoc:" + expediente.getNumeroDoc());
-						System.out.println("getNumeroSid:" + expediente.getNumeroSid());
-						System.out.println("getIddoc:" + expediente.getIddoc());
-						System.out.println("getFechaCompleto:" + expediente.getFechaCompleto());
+						logger.info("Datos de retorno: ");
+						logger.info("getNumeroDoc:" + expediente.getNumeroDoc());
+						logger.info("getNumeroSid:" + expediente.getNumeroSid());
+						logger.info("getIddoc:" + expediente.getIddoc());
+						logger.info("getFechaCompleto:" + expediente.getFechaCompleto());
 
 					} else {
-						System.out.println("Datos de retorno:null");
+						throw new Exception("El expediente es nulo, error al crear expediente.");
+						
 					}
 					String hojaRuta = expediente.getNumeroSid() + "-" + expediente.getNumeroAnio().toString();
 					System.out.println("Hoja de ruta: " + hojaRuta);
@@ -322,16 +320,17 @@ public class DocumentScheduler {
 					}
 				} catch (Exception ex) {
 					docService.Documento_FlgServicioError(documento.getId_documento());
-					System.out.println("ERROR EN LA CREACIoN DE LA HOJA DE RUTA SGDD:");
-					System.out.println(ex.toString());
+					logger.error("ERROR EN LA CREACIoN DE LA HOJA DE RUTA SGDD:");
+					logger.error(ex.toString());
 					ex.printStackTrace();
 				}
 			}
 		}
 	}
 
+
+	//Job para mantener actualizadas las tablas ubigeo,  y otras listas 
 	@Scheduled(cron = "0 0 3,23 * * *") // se ejecuta a las 3AM y 11PM
-	// @Scheduled(fixedRate = 60000) // cada 24 horas 86400000
 	public void ScheduletDocumentSGDD2() throws IOException {
 		System.out.println("-----ScheduletDocumentSGDD2-------");
 		System.out.println("EJECUTANDOSE SINCRONIZACION DE LISTAS: " + (new Date(System.currentTimeMillis())));
@@ -503,152 +502,6 @@ public class DocumentScheduler {
 		// }
 		// }
 
-	}
-
-//	@Scheduled(cron = "0 0 8,16 * * *") // se ejecuta a las 8AM y 12PM
-//	@Scheduled(cron = "0 0 0 * * *") // se ejecuta a la media noche
-	// @Scheduled(fixedRate = 60000) // cada 24 horas 86400000
-	public void ScheduletDocumentSGDD3() throws IOException {
-
-		System.out.println("-----ScheduletDocumentSGDD3-------");
-
-		System.out.println("EJECUTANDOSE ACTUALIZACION DE ESTADOS OBSERVADOS PROGRAMADOS DE DOCUMENTOS DEL SGDD: "
-				+ (new Date(System.currentTimeMillis())));
-
-		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstado2(2);
-		// System.out.println("entro aqui 1");
-		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
-			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
-			// System.out.println("entro aqui 1");
-			System.out.println("Lista de :" + lista.size());
-			for (Documento documento : lista) {
-				try {
-					System.out.println("Solicitud a reparar:" + documento.getId_documento());
-					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
-					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
-
-					IdValorDto idValorDto = new IdValorDto();
-					System.out.println("Datos del documento: id:" + documento.getId_documento());
-					System.out.println("sid:" + documento.getNumero_sid());
-					System.out.println("anio:" + documento.getAnio());
-
-					VentanillastdProxy proxy = new VentanillastdProxy();
-					String USU = "lmauricio";
-					String IP = "10.10.10.10";
-					// System.out.println("RUC: " + ruc);
-					// System.out.println("IP: " + IP);
-
-					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
-
-					if (idValorDto != null) {
-						System.out.println("estado std:" + idValorDto.getValor().toUpperCase());
-
-						/*if (idValorDto.getValor().toUpperCase().equals("EN PROCESO")) { //ANULADO
-
-							docService.DocumentoActualizar_Estado(documento.getId_documento(), 6);
-							return;
-						}*/
-						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO")) { //ANULADO
-
-							docService.DocumentoActualizar_Estado(documento.getId_documento(), 6);
-						}
-						if (idValorDto.getValor().toUpperCase().equals("NUEVO")) {//SUBSANADO
-
-							docService.DocumentoActualizar_Estado(documento.getId_documento(), 4);
-						}
-					}
-
-					// System.out.println("RUC: " + ruc);
-
-				} catch (Exception ex) {
-					docService.Documento_FlgServicioError(documento.getId_documento());
-					System.out.println("ERROR EN EL SERVICIO DE ESTADO SGDD:");
-					System.out.println(ex.toString());
-				}
-			}
-		}
-	}
-
-
-//	@Scheduled(cron = "0 0 * * * *") // cada hora   // desactivado del excel
-	// @Scheduled(fixedRate = 60000) // cada 24 horas 86400000
-	public void ScheduletDocumentSGDD4() throws IOException {
-
-		System.out.println("-----ScheduletDocumentSGDD4-------");
-
-		System.out.println("EJECUTANDOSE ACTUALIZACION DE ESTADOS OBSERVADOS PROGRAMADOS DE DOCUMENTOS DEL SGDD: "
-				+ (new Date(System.currentTimeMillis())));
-
-		Auditoria documentosPorRecibir = docService.Documento_Listar_PorEstadoTemp(1);
-		// System.out.println("entro aqui 1");
-		if (documentosPorRecibir.ejecucion_procedimiento && !documentosPorRecibir.rechazar) {
-			List<Documento> lista = (List<Documento>) documentosPorRecibir.objeto;
-			// System.out.println("entro aqui 1");
-			System.out.println("Lista de :" + lista.size());
-			for (Documento documento : lista) {
-				try {
-					System.out.println("Solicitud a reparar:" + documento.getId_documento());
-					ArrayList<AnexoDto> anexoDto = new ArrayList<AnexoDto>();
-					ArrayList<AnexoDto> anexoDtoPrincipal = new ArrayList<AnexoDto>();
-
-					IdValorDto idValorDto = new IdValorDto();
-					System.out.println("Datos del documento: id:" + documento.getId_documento());
-					System.out.println("sid:" + documento.getNumero_sid());
-					System.out.println("anio:" + documento.getAnio());
-					System.out.println("status:" + documento.getDesc_estado_documento());
-
-					VentanillastdProxy proxy = new VentanillastdProxy();
-					String USU = "lmauricio";
-					String IP = "10.10.10.10";
-					// System.out.println("RUC: " + ruc);
-					// System.out.println("IP: " + IP);
-
-					idValorDto = proxy.estadoDeExpediente(USU, documento.getNumero_sid(), documento.getAnio(), IP);
-
-					ObjectMapper mapper = new ObjectMapper();
-					System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(idValorDto));
-
-					if (idValorDto != null) {
-
-						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(1L)) { //POR RECIBIR
-
-							docService.Actualizar_Estado(documento.getId_documento(), 7, "");
-						}
-						if (idValorDto.getValor().toUpperCase().equals("PROCESO") && idValorDto.getId().equals(2L)) { //RECIBIDO
-
-							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
-						}
-						if (idValorDto.getValor().toUpperCase().equals("EN PROCESO") && idValorDto.getId().equals(3L)) { //RECIBIDO
-
-							docService.Actualizar_Estado(documento.getId_documento(), 3,"");
-						}
-						if (idValorDto.getValor().toUpperCase().equals("OBSERVADO") && idValorDto.getId().equals(1L)) { //OBSERVADO
-
-							docService.Actualizar_Estado(documento.getId_documento(), 2,"");
-						}
-						if (idValorDto.getValor().toUpperCase().equals("NO PRESENTADO") && (idValorDto.getId().equals(6L) ||  idValorDto.getId().equals(7L)) ) { //ANULADO
-
-							docService.Actualizar_Estado(documento.getId_documento(), 6,"");
-						}
-						if (idValorDto.getValor().toUpperCase().equals("FINALIZADO") && idValorDto.getId().equals(4L)) { //FINALIZADO
-
-							docService.Actualizar_Estado(documento.getId_documento(), 5,"");
-						}
-
-
-					}
-
-					// System.out.println("RUC: " + ruc);
-
-				} catch (Exception ex) {
-//					docService.Documento_FlgServicioError(documento.getId_documento());
-					System.out.println(ex.getMessage());
-					docService.Actualizar_Estado(documento.getId_documento(), 100, ex.toString());
-					logger.error("ERROR EN EL SERVICIO DE ESTADO SGDD: " + documento.getId_documento() );
-//					System.out.println(ex.toString());
-				}
-			}
-		}
 	}
 
 
