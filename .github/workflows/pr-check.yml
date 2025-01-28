@@ -15,3 +15,11 @@ jobs:
             echo "Error: Pull request must be from the 'develop' branch"
             exit 1
           fi
+
+  prevent-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prevent direct push
+        run: |
+          echo "Direct pushes to the main branch are not allowed."
+          exit 1
