@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -272,7 +273,7 @@ public class DocumentScheduler {
 					Casilla modelo = new Casilla();
 					modelo.setId_documento(documento.getId_documento());
 					modelo.setId_persona(Long.valueOf(documento.getId_persona()));
-					modelo.setId_usuario(UserIdentityHelper.getUserId());
+					modelo.setId_usuario(Integer.valueOf(documento.getId_usuario()));
 
 					Date date = new Date();
 					SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -294,8 +295,8 @@ public class DocumentScheduler {
 					String Plantilla = "email/SGDD_documento_crear";
 					String mensaje = emailComponent.getTemplate(Plantilla, params);
 
-					modelo.setIp_creacion(UserIdentityHelper.getClientIpAddress());
-					modelo.setUsu_creacion(UserIdentityHelper.get_CodigoUsuario());
+					modelo.setIp_creacion(String.valueOf(InetAddress.getLocalHost()));
+					modelo.setUsu_creacion(documento.getId_usuario());
 					modelo.setObservacion(documento.getAsunto());
 					modelo.setMensaje_html(mensaje);
 					modelo.setFlg_notificacion(1);
