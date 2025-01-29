@@ -108,7 +108,7 @@ public class Ventanillastd_ServiceLocator extends org.apache.axis.client.Service
         }
     }
 
-    public javax.xml.namespace.QName getServiceName() {374201
+    public javax.xml.namespace.QName getServiceName() {
         return new javax.xml.namespace.QName("http://ws.web.bs.std.mef.gob.pe/", "ventanillastd");
     }
 
