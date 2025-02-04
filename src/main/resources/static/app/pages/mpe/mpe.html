@@ -188,9 +188,14 @@
 						<td class="text-center">{{ request.desc_oficina }}</td>
 						<td class="text-center">{{ request.nro_folios }}</td>
 						<td class="text-center">{{ request.nro_anexos }}</td>
-						<!-- 						<td class="text-center">{{ request.hoja_ruta_referencial }}</td> -->
-						<td class="text-center">{{ request.numero_sid }} - {{
-							request.anio }}</td>
+						<!-- <td class="text-center">{{ request.hoja_ruta_referencial }}</td> -->
+						<!-- <td class="text-center">{{ request.numero_sid }} - {{ request.anio }}</td> -->
+						<td class="text-center" ng-if="request.numero_sid == ''">
+							<i class="fa fa-clock-o" style="color: #b30a14; font-size: 18px;"></i>
+						</td>
+						<td class="text-center" ng-if="request.numero_sid != ''">
+							{{ request.numero_sid }} - {{request.anio }}
+						</td>
 
 					</tr>
 				</tbody>
