@@ -609,12 +609,14 @@ public class DocumentoControlador {
 					// System.out.println("Plantilla:"+plantillaCorreo);
 					emailutil = new EmailUtil();
 
-					if (micorrreo.equals("L")) {
-						emailComponent.sendHTML(entidad.getCorreo(), "Mensaje de Mesa de Partes - MEF",
-								entidad.getCorreo_copia(), plantillaCorreo, params, resources);
-					} else {
-						emailutil.sendHTML(entidad.getCorreo(), "Mensaje de Mesa de Partes - MEF",
-								entidad.getCorreo_copia(), plantillaCorreo, params, resources);
+					if(!"".equals(hojaRuta)) { //Valida que exista una Hoja de ruta
+						if (micorrreo.equals("L")) {
+							emailComponent.sendHTML(entidad.getCorreo(), "Mensaje de Mesa de Partes - MEF",
+									entidad.getCorreo_copia(), plantillaCorreo, params, resources);
+						} else {
+							emailutil.sendHTML(entidad.getCorreo(), "Mensaje de Mesa de Partes - MEF",
+									entidad.getCorreo_copia(), plantillaCorreo, params, resources);
+						}
 					}
 
 					auditoria.mensaje_salida = message.isEmpty()
